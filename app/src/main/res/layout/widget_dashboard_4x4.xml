@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_bg"
+    android:padding="16dp">
+
+    <!-- Header Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+        
+        <ImageView
+            android:id="@+id/widget_dash_dot"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/widget_dot"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/widget_dash_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Morning Commute"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Fleet box -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/widget_card_bg"
+            android:padding="12dp"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CAB"
+                android:textColor="#A0B0C0"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/widget_dash_cab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="KA-00-XX"
+                android:textColor="#E3E2E6"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="14sp" />
+        </LinearLayout>
+        
+        <!-- Route box -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/widget_card_bg"
+            android:padding="12dp"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ROUTE/TIME"
+                android:textColor="#A0B0C0"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/widget_dash_route"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="---"
+                android:textColor="#E3E2E6"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- OTP Grid -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+        
+        <!-- Sign IN Box -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/widget_card_bg"
+            android:gravity="center"
+            android:layout_marginEnd="8dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SIGN IN"
+                android:textColor="#A0B0C0"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="12sp" />
+                
+            <TextView
+                android:id="@+id/widget_dash_otp_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="----"
+                android:textColor="#FFF176"
+                android:textSize="28sp"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <!-- Sign OUT Box -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/widget_card_bg"
+            android:gravity="center"
+            android:layout_marginStart="8dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SIGN OUT"
+                android:textColor="#A0B0C0"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="12sp" />
+                
+            <TextView
+                android:id="@+id/widget_dash_otp_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="----"
+                android:textColor="#FFF176"
+                android:textSize="28sp"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

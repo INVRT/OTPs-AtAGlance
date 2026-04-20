@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:padding="12dp">
+
+    <!-- Top Left: Dot & IN/OUT Status -->
+    <LinearLayout
+        android:id="@+id/widget_pocket_left_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="4dp">
+        
+        <ImageView
+            android:id="@+id/widget_pocket_dot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:src="@drawable/widget_dot"
+            android:layout_marginEnd="6dp" />
+
+        <TextView
+            android:id="@+id/widget_pocket_in_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IN"
+            android:textColor="#A0B0C0"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false" />
+    </LinearLayout>
+
+    <!-- Top Right: Info Pill -->
+    <LinearLayout
+        android:id="@+id/widget_pocket_pill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:background="@drawable/widget_card_bg"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/widget_pocket_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="07:30"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false" />
+    </LinearLayout>
+
+    <!-- Centered OTP (shifted down) -->
+    <TextView
+        android:id="@+id/widget_pocket_otp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/widget_pocket_left_header"
+        android:layout_alignParentBottom="true"
+        android:text="----"
+        android:textColor="#FFF176"
+        android:textSize="46sp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:includeFontPadding="false" />
+</RelativeLayout>
