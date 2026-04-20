@@ -2,10 +2,12 @@ package com.example.cabglance2.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val GoldYellow = Color(0xFFFDD835) // Deep bright yellow from icon
+val DeepBlack = Color(0xFF0B0B0B)  // Near-black background
+val SurfaceBlack = Color(0xFF161616) // Slightly lighter for cards
+val SurfaceVariantBlack = Color(0xFF222222) // Lighter for secondary cards
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val GoldYellowLight = Color(0xFFFBC02D) // Darker yellow for white bg contrast
+val LightBackground = Color(0xFFF8F9FA)
+val LightSurface = Color(0xFFFFFFFF)
+val LightSurfaceVariant = Color(0xFFEEEEEE)

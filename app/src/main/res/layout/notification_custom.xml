@@ -28,7 +28,7 @@
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:fontFamily="sans-serif-medium" />
+            android:fontFamily="google-sans" />
 
         <TextView
             android:id="@+id/notif_subtitle"
@@ -37,7 +37,7 @@
             android:text="Status here"
             android:textColor="#A0B0C0"
             android:textSize="12sp"
-            android:fontFamily="sans-serif-medium" />
+            android:fontFamily="google-sans" />
     </LinearLayout>
 
     <LinearLayout
@@ -56,16 +56,16 @@
             android:text="OTP"
             android:textColor="#A0B0C0"
             android:textSize="10sp"
-            android:fontFamily="sans-serif-medium" />
+            android:fontFamily="google-sans" />
 
         <TextView
             android:id="@+id/notif_otp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="----"
-            android:textColor="#FFF176"
+            android:textColor="#FDD835"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:fontFamily="sans-serif-medium" />
+            android:fontFamily="google-sans" />
     </LinearLayout>
 </LinearLayout>

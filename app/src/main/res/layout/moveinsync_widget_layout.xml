@@ -1,7 +1,8 @@
-﻿<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2E2E2E"
+    android:background="@drawable/widget_bg"
     android:orientation="vertical"
     android:padding="16dp"
     android:gravity="center">
@@ -13,25 +14,28 @@
         android:text="Waiting for Ride..."
         android:textColor="#FFFFFF"
         android:textSize="14sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:fontFamily="google-sans" />
 
     <TextView
         android:id="@+id/widget_otp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="---- / ----"
-        android:textColor="#00FF00"
+        android:textColor="#FDD835"
         android:textSize="36sp"
         android:textStyle="bold"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:fontFamily="google-sans" />
 
     <TextView
         android:id="@+id/widget_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textColor="#AAAAAA"
+        android:textColor="#A0B0C0"
         android:textSize="12sp"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="4dp"
+        android:fontFamily="google-sans" />
 
 </LinearLayout>
