@@ -1,4 +1,4 @@
-﻿package com.example.cabglance2
+package com.example.cabglance2
 
 import java.util.regex.Pattern
 
@@ -33,14 +33,18 @@ object OtpParser {
         var routeNo: String? = null
         var isApproaching = false
 
-        // Determine type based on keywords
-        if (message.contains("1.5 km", ignoreCase = true) || message.contains("approaching", ignoreCase = true)) {
+        // Determine type based on explicit MoveInSync/Cab keywords
+        val lowerMsg = message.lowercase()
+        if ((lowerMsg.contains("1.5 km") || lowerMsg.contains("approaching")) && lowerMsg.contains("cab")) {
             type = NotificationType.APPROACHING
             isApproaching = true
-        } else if (message.contains("Shift:", ignoreCase = true) || message.contains("ETP:", ignoreCase = true)) {
+        } else if (lowerMsg.contains("shift:") || lowerMsg.contains("etp:")) {
             type = NotificationType.LOGIN
-        } else if (message.contains("drop for:", ignoreCase = true)) {
+        } else if (lowerMsg.contains("drop for:") || lowerMsg.contains("routeno:")) {
             type = NotificationType.LOGOUT
+        } else {
+            // Not a cab notification, return UNKNOWN immediately so it's ignored
+            return RideInfo(NotificationType.UNKNOWN, rawText = message)
         }
 
         // Extract OTPs

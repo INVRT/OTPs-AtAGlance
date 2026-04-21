@@ -78,7 +78,8 @@ class PocketWidgetProvider : AppWidgetProvider() {
                     headerText = "${rideInfo.routeNo ?: "R-??"}"
                     dotColor = Color.parseColor("#F44336") // Red for Logout
                 } else if (rideInfo.type == NotificationType.APPROACHING) {
-                    headerText = "NEAR"
+                    val etpText = rideInfo.etp
+                    headerText = if (etpText != null) "NEAR • $etpText" else "NEAR"
                     dotColor = Color.parseColor("#FFC107") // Yellow for Near
                 }
                 

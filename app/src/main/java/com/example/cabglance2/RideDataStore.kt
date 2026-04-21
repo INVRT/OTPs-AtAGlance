@@ -10,31 +10,44 @@ object RideDataStore {
     fun saveRideInfo(context: Context, info: RideInfo) {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         
+        val oldInfo = getRideInfo(context)
+        val finalInfo = if (info.type == NotificationType.APPROACHING && oldInfo != null) {
+            info.copy(
+                signInOtp = info.signInOtp ?: oldInfo.signInOtp,
+                signOutOtp = info.signOutOtp ?: oldInfo.signOutOtp,
+                etp = info.etp ?: oldInfo.etp,
+                routeNo = info.routeNo ?: oldInfo.routeNo,
+                cabNo = info.cabNo ?: oldInfo.cabNo
+            )
+        } else {
+            info
+        }
+
         // Save history first
         val historyRaw = prefs.getString("history", "[]") ?: "[]"
         val historyArr = try { JSONArray(historyRaw) } catch(e: Exception) { JSONArray() }
         
         val timestamp = System.currentTimeMillis()
-        val entry = "[$timestamp] ${info.type}: ${info.rawText}"
+        val entry = "[$timestamp] ${finalInfo.type}: ${finalInfo.rawText}"
         historyArr.put(entry)
         
-        // Keep only last 10
+        // Keep only last 2 updates
         val newArr = JSONArray()
-        val startIdx = if (historyArr.length() > 10) historyArr.length() - 10 else 0
+        val startIdx = if (historyArr.length() > 2) historyArr.length() - 2 else 0
         for (i in startIdx until historyArr.length()) {
             newArr.put(historyArr.getString(i))
         }
 
         prefs.edit()
             .putString("history", newArr.toString())
-            .putString("type", info.type.name)
-            .putString("signInOtp", info.signInOtp)
-            .putString("signOutOtp", info.signOutOtp)
-            .putString("etp", info.etp)
-            .putString("cabNo", info.cabNo)
-            .putString("routeNo", info.routeNo)
-            .putBoolean("isApproaching", info.isApproaching)
-            .putString("rawText", info.rawText)
+            .putString("type", finalInfo.type.name)
+            .putString("signInOtp", finalInfo.signInOtp)
+            .putString("signOutOtp", finalInfo.signOutOtp)
+            .putString("etp", finalInfo.etp)
+            .putString("cabNo", finalInfo.cabNo)
+            .putString("routeNo", finalInfo.routeNo)
+            .putBoolean("isApproaching", finalInfo.isApproaching)
+            .putString("rawText", finalInfo.rawText)
             .apply()
     }
 

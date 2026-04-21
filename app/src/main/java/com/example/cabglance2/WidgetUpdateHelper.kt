@@ -17,11 +17,15 @@ object WidgetUpdateHelper {
     const val NOTIFICATION_ID = 1001
 
     fun updateWidgetAndNotification(context: Context, rideInfo: RideInfo) {
+        // Ignore random SMS or notifications that are not MoveInSync
+        if (rideInfo.type == NotificationType.UNKNOWN) return
+
         // 1. Persist data
         RideDataStore.saveRideInfo(context, rideInfo)
+        val finalInfo = RideDataStore.getRideInfo(context) ?: rideInfo
         
         // 2. Update Sticky Notification
-        showStickyNotification(context, rideInfo)
+        showStickyNotification(context, finalInfo)
         
         // 3. Trigger AppWidget updates
         triggerWidgetUpdate(context, MoveInSyncAppWidgetProvider::class.java)
@@ -71,7 +75,7 @@ object WidgetUpdateHelper {
             otpLabel = "DROP OTP"
             activeOtp = rideInfo.signOutOtp ?: "----"
         } else if (rideInfo.type == NotificationType.APPROACHING) {
-            subtitle = "CAB APPROACHING!"
+            subtitle = "CAB APPROACHING!" + if (rideInfo.etp != null) " | ETP: ${rideInfo.etp}" else ""
             otpLabel = "LOGIN OTP"
             activeOtp = rideInfo.signInOtp ?: "----"
         }
