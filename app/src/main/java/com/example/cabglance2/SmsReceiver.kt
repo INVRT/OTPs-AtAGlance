@@ -1,4 +1,4 @@
-﻿package com.example.cabglance2
+package com.example.cabglance2
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -19,9 +19,12 @@ class SmsReceiver : BroadcastReceiver() {
                 val sender = smsMessage.displayOriginatingAddress ?: ""
                 val body = smsMessage.displayMessageBody ?: ""
 
-                // Assuming MoveInSync SMS headers might look like "AD-MOVSYN" or similar, 
-                // but we can also just parse for the content match.
                 Log.d("CabGlanceSMS", "Received SMS from: $sender - $body")
+
+                // SMS Sender Validation (e.g. "XX-MISETS-S")
+                if (!sender.contains("MISETS", ignoreCase = true) && !sender.contains("MoveInSync", ignoreCase = true)) {
+                    continue
+                }
 
                 if (body.contains("MovelnSync", ignoreCase = true) || 
                     body.contains("MoveInSync", ignoreCase = true) || 

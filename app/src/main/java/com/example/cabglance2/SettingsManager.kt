@@ -16,11 +16,11 @@ object SettingsManager {
     }
 
     fun getSourcingMode(context: Context): SourcingMode {
-        val modeStr = getPrefs(context).getString(KEY_SOURCING_MODE, SourcingMode.APP_NOTIFICATION.name)
+        val modeStr = getPrefs(context).getString(KEY_SOURCING_MODE, SourcingMode.SMS.name)
         return try {
-            SourcingMode.valueOf(modeStr ?: SourcingMode.APP_NOTIFICATION.name)
+            SourcingMode.valueOf(modeStr ?: SourcingMode.SMS.name)
         } catch (e: Exception) {
-            SourcingMode.APP_NOTIFICATION
+            SourcingMode.SMS
         }
     }
 
@@ -29,7 +29,7 @@ object SettingsManager {
     }
 
     fun isStickyNotificationEnabled(context: Context): Boolean {
-        return getPrefs(context).getBoolean("StickyNotificationEnabled", true)
+        return getPrefs(context).getBoolean("StickyNotificationEnabled", false)
     }
 
     fun setStickyNotificationEnabled(context: Context, enabled: Boolean) {

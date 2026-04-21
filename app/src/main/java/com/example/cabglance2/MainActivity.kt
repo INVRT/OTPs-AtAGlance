@@ -20,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.ui.draw.rotate
 
 class MainActivity : ComponentActivity() {
 
@@ -48,7 +51,42 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             CabGlance2Theme {
-                Scaffold { innerPadding ->
+                Scaffold(
+                    bottomBar = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp, top = 8.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("lit by ", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(
+                                "@", 
+                                style = MaterialTheme.typography.bodySmall, 
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                "invert", 
+                                style = MaterialTheme.typography.bodySmall, 
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.rotate(180f)
+                            )
+                            Text(
+                                "ignite", 
+                                style = MaterialTheme.typography.bodySmall, 
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                " ; )", 
+                                style = MaterialTheme.typography.bodySmall, 
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                ) { innerPadding ->
                     var currentMode by remember { mutableStateOf(SettingsManager.getSourcingMode(this)) }
                     var isStickyEnabled by remember { mutableStateOf(SettingsManager.isStickyNotificationEnabled(this)) }
                     var history by remember { mutableStateOf(RideDataStore.getHistory(this)) }
@@ -95,14 +133,26 @@ fun DashboardAppUI(
     onRequestNotificationPermission: () -> Unit,
     onSimulate: (RideInfo) -> Unit
 ) {
+    var devTapCount by remember { mutableStateOf(0) }
+
     LazyColumn(
         modifier = modifier.padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
             Spacer(modifier = Modifier.height(24.dp))
-            Text("CabGlance Setup", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold)
-            Text("Configure your smart commute engine.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                "CabGlance", 
+                style = MaterialTheme.typography.headlineLarge, 
+                fontWeight = FontWeight.Bold, 
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    devTapCount++
+                }
+            )
             Spacer(modifier = Modifier.height(24.dp))
         }
 
@@ -123,7 +173,7 @@ fun DashboardAppUI(
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(selected = currentMode == SourcingMode.SMS, onClick = { onModeSelected(SourcingMode.SMS) })
-                        Text("SMS Listening Mode")
+                        Text("SMS Listening Mode (Recommended)")
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -147,48 +197,59 @@ fun DashboardAppUI(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     val context = androidx.compose.ui.platform.LocalContext.current
+                    var morningTime by remember { mutableStateOf(ScheduleManager.getMorningTime(context)) }
+                    var eveningTime by remember { mutableStateOf(ScheduleManager.getEveningTime(context)) }
+
                     Text("Custom Reminders", fontWeight = FontWeight.Medium)
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                         OutlinedButton(onClick = {
-                            val time = ScheduleManager.getMorningTime(context)
                             android.app.TimePickerDialog(context, { _, h, m ->
                                 ScheduleManager.setMorningTime(context, h, m)
-                            }, time.first, time.second, true).show()
-                        }) { Text("Morning") }
+                                morningTime = Pair(h, m)
+                            }, morningTime.first, morningTime.second, true).show()
+                        }) { 
+                            val timeStr = String.format("%02d:%02d", morningTime.first, morningTime.second)
+                            Text("Morning ($timeStr)") 
+                        }
                         
                         OutlinedButton(onClick = {
-                            val time = ScheduleManager.getEveningTime(context)
                             android.app.TimePickerDialog(context, { _, h, m ->
                                 ScheduleManager.setEveningTime(context, h, m)
-                            }, time.first, time.second, true).show()
-                        }) { Text("Evening") }
+                                eveningTime = Pair(h, m)
+                            }, eveningTime.first, eveningTime.second, true).show()
+                        }) { 
+                            val timeStr = String.format("%02d:%02d", eveningTime.first, eveningTime.second)
+                            Text("Evening ($timeStr)") 
+                        }
                     }
                 }
             }
         }
 
-        item {
-            Card(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Developer Simulation", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Button(onClick = {
-                        onSimulate(RideInfo(NotificationType.LOGIN, "8192", "4096", "08:30", "KA-01-AB-1234", "R-15", false, "Test Morning"))
-                    }, modifier = Modifier.fillMaxWidth()) {
-                        Text("Simulate Morning Login")
-                    }
-                    Button(onClick = {
-                        onSimulate(RideInfo(NotificationType.APPROACHING, "8192", "4096", null, "KA-01-AB-1234", null, true, "Test Approach"))
-                    }, modifier = Modifier.fillMaxWidth()) {
-                        Text("Simulate 1.5km Away")
-                    }
-                    Button(onClick = {
-                        onSimulate(RideInfo(NotificationType.LOGOUT, "1024", "2048", null, null, "R-18", false, "Test Evening"))
-                    }, modifier = Modifier.fillMaxWidth()) {
-                        Text("Simulate Evening Logout")
+        if (devTapCount >= 7) {
+            item {
+                Card(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("Developer Simulation", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        Button(onClick = {
+                            onSimulate(RideInfo(NotificationType.LOGIN, "8192", "4096", "08:30", "KA-01-AB-1234", "R-15", false, "Test Morning"))
+                        }, modifier = Modifier.fillMaxWidth()) {
+                            Text("Simulate Morning Login")
+                        }
+                        Button(onClick = {
+                            onSimulate(RideInfo(NotificationType.APPROACHING, "8192", "4096", null, "KA-01-AB-1234", null, true, "Test Approach"))
+                        }, modifier = Modifier.fillMaxWidth()) {
+                            Text("Simulate 1.5km Away")
+                        }
+                        Button(onClick = {
+                            onSimulate(RideInfo(NotificationType.LOGOUT, "1024", "2048", null, null, "R-18", false, "Test Evening"))
+                        }, modifier = Modifier.fillMaxWidth()) {
+                            Text("Simulate Evening Logout")
+                        }
                     }
                 }
             }
@@ -217,6 +278,8 @@ fun DashboardAppUI(
             }
         }
         
-        item { Spacer(modifier = Modifier.height(32.dp)) }
+        item { 
+            Spacer(modifier = Modifier.height(32.dp)) 
+        }
     }
 }
