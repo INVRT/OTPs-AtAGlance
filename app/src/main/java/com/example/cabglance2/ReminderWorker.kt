@@ -52,6 +52,9 @@ class ReminderWorker(appContext: Context, workerParams: WorkerParameters) :
             }
         }
 
+        // Re-synchronize and schedule the next day's OneTime tasks
+        ScheduleManager.setupReminders(applicationContext)
+
         return Result.success()
     }
 }

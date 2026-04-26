@@ -25,61 +25,69 @@ object ScheduleManager {
 
     fun getMorningTime(context: Context): Pair<Int, Int> {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        return Pair(prefs.getInt("m_hour", 7), prefs.getInt("m_min", 30))
+        return Pair(prefs.getInt("m_hour", 21), prefs.getInt("m_min", 0))
     }
 
     fun getEveningTime(context: Context): Pair<Int, Int> {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        return Pair(prefs.getInt("e_hour", 14), prefs.getInt("e_min", 0))
+        return Pair(prefs.getInt("e_hour", 1), prefs.getInt("e_min", 0))
     }
 
     fun setupReminders(context: Context) {
         val workManager = WorkManager.getInstance(context)
+        
+        if (!SettingsManager.isRemindersEnabled(context)) {
+            workManager.cancelUniqueWork("MorningReminder")
+            workManager.cancelUniqueWork("EveningReminder")
+            return
+        }
+
         val mTime = getMorningTime(context)
         val eTime = getEveningTime(context)
 
         // Setup Morning Reminder
-        val morningDelay = calculateDelayMinutes(mTime.first, mTime.second)
+        val morningDelay = calculateDelayMs(mTime.first, mTime.second)
         val morningData = Data.Builder().putString("shift", "Morning").build()
-        val morningWork = PeriodicWorkRequestBuilder<ReminderWorker>(24, TimeUnit.HOURS)
-            .setInitialDelay(morningDelay, TimeUnit.MINUTES)
+        val morningWork = androidx.work.OneTimeWorkRequestBuilder<ReminderWorker>()
+            .setInitialDelay(morningDelay, TimeUnit.MILLISECONDS)
             .setInputData(morningData)
             .build()
         
-        workManager.enqueueUniquePeriodicWork(
+        workManager.enqueueUniqueWork(
             "MorningReminder",
-            ExistingPeriodicWorkPolicy.UPDATE,
+            androidx.work.ExistingWorkPolicy.REPLACE,
             morningWork
         )
 
         // Setup Evening Reminder
-        val eveningDelay = calculateDelayMinutes(eTime.first, eTime.second)
+        val eveningDelay = calculateDelayMs(eTime.first, eTime.second)
         val eveningData = Data.Builder().putString("shift", "Evening").build()
-        val eveningWork = PeriodicWorkRequestBuilder<ReminderWorker>(24, TimeUnit.HOURS)
-            .setInitialDelay(eveningDelay, TimeUnit.MINUTES)
+        val eveningWork = androidx.work.OneTimeWorkRequestBuilder<ReminderWorker>()
+            .setInitialDelay(eveningDelay, TimeUnit.MILLISECONDS)
             .setInputData(eveningData)
             .build()
         
-        workManager.enqueueUniquePeriodicWork(
+        workManager.enqueueUniqueWork(
             "EveningReminder",
-            ExistingPeriodicWorkPolicy.UPDATE,
+            androidx.work.ExistingWorkPolicy.REPLACE,
             eveningWork
         )
     }
 
-    private fun calculateDelayMinutes(targetHour: Int, targetMin: Int): Long {
+    private fun calculateDelayMs(targetHour: Int, targetMin: Int): Long {
         val now = Calendar.getInstance()
         val target = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, targetHour)
             set(Calendar.MINUTE, targetMin)
             set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
 
-        if (target.before(now)) {
+        // If target is before or perfectly equal to now, push to tomorrow to avoid 0-delay loop
+        if (target.timeInMillis <= now.timeInMillis) {
             target.add(Calendar.DAY_OF_YEAR, 1)
         }
 
-        val diffMs = target.timeInMillis - now.timeInMillis
-        return TimeUnit.MILLISECONDS.toMinutes(diffMs)
+        return target.timeInMillis - now.timeInMillis
     }
 }

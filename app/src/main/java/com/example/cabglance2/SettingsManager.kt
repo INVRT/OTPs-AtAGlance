@@ -35,5 +35,13 @@ object SettingsManager {
     fun setStickyNotificationEnabled(context: Context, enabled: Boolean) {
         getPrefs(context).edit().putBoolean("StickyNotificationEnabled", enabled).apply()
     }
+
+    fun isRemindersEnabled(context: Context): Boolean {
+        return getPrefs(context).getBoolean("RemindersEnabled", true)
+    }
+
+    fun setRemindersEnabled(context: Context, enabled: Boolean) {
+        getPrefs(context).edit().putBoolean("RemindersEnabled", enabled).apply()
+    }
 }
 

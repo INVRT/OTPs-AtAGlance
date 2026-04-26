@@ -89,12 +89,14 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     var currentMode by remember { mutableStateOf(SettingsManager.getSourcingMode(this)) }
                     var isStickyEnabled by remember { mutableStateOf(SettingsManager.isStickyNotificationEnabled(this)) }
+                    var isRemindersEnabled by remember { mutableStateOf(SettingsManager.isRemindersEnabled(this)) }
                     var history by remember { mutableStateOf(RideDataStore.getHistory(this)) }
 
                     DashboardAppUI(
                         modifier = Modifier.padding(innerPadding).fillMaxSize(),
                         currentMode = currentMode,
                         isStickyEnabled = isStickyEnabled,
+                        isRemindersEnabled = isRemindersEnabled,
                         history = history,
                         onModeSelected = { selectedMode ->
                             SettingsManager.setSourcingMode(this, selectedMode)
@@ -107,6 +109,11 @@ class MainActivity : ComponentActivity() {
                                 // Clear immediately 
                                 androidx.core.app.NotificationManagerCompat.from(this).cancel(1001)
                             }
+                        },
+                        onRemindersCheckChanged = { active ->
+                            SettingsManager.setRemindersEnabled(this, active)
+                            isRemindersEnabled = active
+                            ScheduleManager.setupReminders(this)
                         },
                         onRequestNotificationPermission = {
                             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
@@ -127,9 +134,11 @@ fun DashboardAppUI(
     modifier: Modifier = Modifier,
     currentMode: SourcingMode,
     isStickyEnabled: Boolean,
+    isRemindersEnabled: Boolean,
     history: List<String>,
     onModeSelected: (SourcingMode) -> Unit,
     onStickyCheckChanged: (Boolean) -> Unit,
+    onRemindersCheckChanged: (Boolean) -> Unit,
     onRequestNotificationPermission: () -> Unit,
     onSimulate: (RideInfo) -> Unit
 ) {
@@ -200,11 +209,23 @@ fun DashboardAppUI(
                     var morningTime by remember { mutableStateOf(ScheduleManager.getMorningTime(context)) }
                     var eveningTime by remember { mutableStateOf(ScheduleManager.getEveningTime(context)) }
 
-                    Text("Custom Reminders", fontWeight = FontWeight.Medium)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text("Custom Reminders", fontWeight = FontWeight.Medium)
+                            Text("Automated cab alerts", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        Switch(checked = isRemindersEnabled, onCheckedChange = onRemindersCheckChanged)
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                        OutlinedButton(onClick = {
+                        OutlinedButton(
+                            enabled = isRemindersEnabled,
+                            onClick = {
                             android.app.TimePickerDialog(context, { _, h, m ->
                                 ScheduleManager.setMorningTime(context, h, m)
                                 morningTime = Pair(h, m)
@@ -214,7 +235,9 @@ fun DashboardAppUI(
                             Text("Morning ($timeStr)") 
                         }
                         
-                        OutlinedButton(onClick = {
+                        OutlinedButton(
+                            enabled = isRemindersEnabled,
+                            onClick = {
                             android.app.TimePickerDialog(context, { _, h, m ->
                                 ScheduleManager.setEveningTime(context, h, m)
                                 eveningTime = Pair(h, m)
