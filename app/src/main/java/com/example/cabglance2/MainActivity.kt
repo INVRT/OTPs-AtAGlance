@@ -107,7 +107,18 @@ class MainActivity : ComponentActivity() {
                             isStickyEnabled = active
                             if (!active) {
                                 // Clear immediately 
-                                androidx.core.app.NotificationManagerCompat.from(this).cancel(1001)
+                                stopService(android.content.Intent(this, StickyNotificationService::class.java))
+                            } else {
+                                // Evaluate if it needs to start
+                                val rideInfo = RideDataStore.getRideInfo(this)
+                                if (rideInfo != null && (rideInfo.type == NotificationType.APPROACHING || rideInfo.type == NotificationType.LOGOUT)) {
+                                    val intent = android.content.Intent(this, StickyNotificationService::class.java)
+                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                        startForegroundService(intent)
+                                    } else {
+                                        startService(intent)
+                                    }
+                                }
                             }
                         },
                         onRemindersCheckChanged = { active ->

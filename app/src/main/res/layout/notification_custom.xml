@@ -11,61 +11,68 @@
         android:id="@+id/notif_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@android:drawable/ic_dialog_info"
+        android:src="@mipmap/ic_launcher"
         android:layout_marginEnd="16dp"/>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/notif_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cab KA-01-XX"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="google-sans" />
-
-        <TextView
-            android:id="@+id/notif_subtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Status here"
-            android:textColor="#A0B0C0"
-            android:textSize="12sp"
-            android:fontFamily="google-sans" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/widget_card_bg"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="4dp"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/notif_otp_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OTP"
-            android:textColor="#A0B0C0"
-            android:textSize="10sp"
-            android:fontFamily="google-sans" />
-
-        <TextView
-            android:id="@+id/notif_otp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="----"
+            android:text="CAB APPROACHING!"
             android:textColor="#FDD835"
-            android:textSize="22sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:fontFamily="google-sans" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IN: "
+                android:textColor="#A0B0C0"
+                android:textSize="16sp"
+                android:fontFamily="google-sans" />
+
+            <TextView
+                android:id="@+id/notif_in_otp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1234"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="google-sans" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OUT: "
+                android:textColor="#A0B0C0"
+                android:textSize="16sp"
+                android:fontFamily="google-sans" />
+
+            <TextView
+                android:id="@+id/notif_out_otp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5678"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="google-sans" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

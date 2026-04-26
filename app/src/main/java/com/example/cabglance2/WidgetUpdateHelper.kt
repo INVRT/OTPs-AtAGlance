@@ -31,8 +31,17 @@ object WidgetUpdateHelper {
             androidx.work.WorkManager.getInstance(context).cancelUniqueWork("IdleStateTransition")
         }
         
-        // 2. Update Sticky Notification
-        showStickyNotification(context, finalInfo)
+        // Handle Sticky Notification Service
+        if (!SettingsManager.isStickyNotificationEnabled(context) || finalInfo.type == NotificationType.IDLE || finalInfo.type == NotificationType.LOGIN) {
+            context.stopService(Intent(context, StickyNotificationService::class.java))
+        } else if (finalInfo.type == NotificationType.APPROACHING || finalInfo.type == NotificationType.LOGOUT) {
+            val intent = Intent(context, StickyNotificationService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+        }
         
         // 3. Trigger AppWidget updates
         triggerWidgetUpdate(context, MoveInSyncAppWidgetProvider::class.java)
@@ -94,65 +103,7 @@ object WidgetUpdateHelper {
     }
 
     private fun showStickyNotification(context: Context, rideInfo: RideInfo) {
-        val nm = NotificationManagerCompat.from(context)
-        if (!SettingsManager.isStickyNotificationEnabled(context) || rideInfo.type == NotificationType.IDLE) {
-            nm.cancel(NOTIFICATION_ID)
-            return
-        }
-
-        createNotificationChannel(context)
-
-        var intent = context.packageManager.getLaunchIntentForPackage("com.moveinsync")
-        if (intent == null) {
-            intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-        }
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
-        val views = RemoteViews(context.packageName, R.layout.notification_custom)
-        val cabNo = rideInfo.cabNo ?: "Unknown Cab"
-        
-        var subtitle = ""
-        var otpLabel = "OTP"
-        var activeOtp = "----"
-
-        if (rideInfo.type == NotificationType.LOGIN) {
-            subtitle = "Morning Commute | ETP: ${rideInfo.etp ?: "--:--"}"
-            otpLabel = "LOGIN OTP"
-            activeOtp = rideInfo.signInOtp ?: "----"
-        } else if (rideInfo.type == NotificationType.LOGOUT) {
-            subtitle = "Evening Drop | Route: ${rideInfo.routeNo ?: "R-??"}"
-            otpLabel = "DROP OTP"
-            activeOtp = rideInfo.signOutOtp ?: "----"
-        } else if (rideInfo.type == NotificationType.APPROACHING) {
-            subtitle = "CAB APPROACHING!" + if (rideInfo.etp != null) " | ETP: ${rideInfo.etp}" else ""
-            otpLabel = "LOGIN OTP"
-            activeOtp = rideInfo.signInOtp ?: "----"
-        }
-
-        views.setTextViewText(R.id.notif_title, "Cab: $cabNo")
-        views.setTextViewText(R.id.notif_subtitle, subtitle)
-        views.setTextViewText(R.id.notif_otp_label, otpLabel)
-        views.setTextViewText(R.id.notif_otp, activeOtp)
-
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setStyle(androidx.core.app.NotificationCompat.DecoratedCustomViewStyle())
-            .setCustomContentView(views)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setOngoing(true)
-            .setContentIntent(pendingIntent)
-
-        if (rideInfo.type == NotificationType.APPROACHING) {
-            builder.setVibrate(longArrayOf(1000, 1000, 1000))
-        }
-
-        try {
-            nm.notify(NOTIFICATION_ID, builder.build())
-        } catch (e: SecurityException) {
-            // Permission lacking silently
-        }
+        // Obsolete: Handled by StickyNotificationService now.
     }
 
     private fun createNotificationChannel(context: Context) {
