@@ -3,7 +3,7 @@ package com.example.cabglance2
 import java.util.regex.Pattern
 
 enum class NotificationType {
-    LOGIN, APPROACHING, LOGOUT, UNKNOWN
+    LOGIN, APPROACHING, LOGOUT, UNKNOWN, IDLE
 }
 
 data class RideInfo(
@@ -20,7 +20,7 @@ data class RideInfo(
 object OtpParser {
     // Regex for Login / Logout: SignIn/Out OTP:3949/1929
     private val otpPattern = Pattern.compile("OTP:(\\d{4})/(\\d{4})|OTP\\s*(\\d{4}),(\\d{4})")
-    private val etpPattern = Pattern.compile("ETP:(\\d{2}:\\d{2})")
+    private val etpPattern = Pattern.compile("ETP:(\\d{2}:\\d{2})|drop for:(\\d{2}:\\d{2})")
     private val cabNoPattern = Pattern.compile("CabNo:([A-Z0-9-]+)|\\(([A-Z0-9-]+)\\)")
     private val routeNoPattern = Pattern.compile("RouteNo:([A-Za-z0-9\\s]+)[.,]")
     
@@ -62,7 +62,7 @@ object OtpParser {
         // Extract ETP
         val etpMatcher = etpPattern.matcher(message)
         if (etpMatcher.find()) {
-            etp = etpMatcher.group(1)
+            etp = etpMatcher.group(1) ?: etpMatcher.group(2)
         }
 
         // Extract Cab No

@@ -43,19 +43,30 @@ class MoveInSyncAppWidgetProvider : AppWidgetProvider() {
                 views.setTextViewText(R.id.widget_title, "No Ride Info")
                 views.setTextViewText(R.id.widget_otp, "---")
             } else {
-                if (rideInfo.type == NotificationType.LOGIN) {
-                    views.setTextViewText(R.id.widget_title, "SignIn/Out ETP: ${rideInfo.etp}")
-                    views.setTextViewText(R.id.widget_otp, "${rideInfo.signInOtp} / ${rideInfo.signOutOtp}")
-                    views.setTextViewText(R.id.widget_subtitle, "Cab: ${rideInfo.cabNo}")
-                } else if (rideInfo.type == NotificationType.LOGOUT) {
-                    views.setTextViewText(R.id.widget_title, "Drop OTP [Route ${rideInfo.routeNo}]")
-                    views.setTextViewText(R.id.widget_otp, "${rideInfo.signInOtp} / ${rideInfo.signOutOtp}")
-                    views.setTextViewText(R.id.widget_subtitle, "")
-                } else if (rideInfo.type == NotificationType.APPROACHING) {
-                    views.setTextViewText(R.id.widget_title, "ðŸš• CAB NEAR! ${rideInfo.cabNo}")
-                    views.setTextViewText(R.id.widget_otp, "${rideInfo.signInOtp} / ${rideInfo.signOutOtp}")
-                    views.setTextViewText(R.id.widget_subtitle, "")
-                    // We could also dynamically change background colors here if RemoteViews allows it
+                if (rideInfo.type == NotificationType.IDLE) {
+                    views.setViewVisibility(R.id.widget_title, android.view.View.GONE)
+                    views.setViewVisibility(R.id.widget_otp, android.view.View.GONE)
+                    views.setViewVisibility(R.id.widget_subtitle, android.view.View.GONE)
+                    views.setViewVisibility(R.id.widget_idle_text, android.view.View.VISIBLE)
+                } else {
+                    views.setViewVisibility(R.id.widget_title, android.view.View.VISIBLE)
+                    views.setViewVisibility(R.id.widget_otp, android.view.View.VISIBLE)
+                    views.setViewVisibility(R.id.widget_subtitle, android.view.View.VISIBLE)
+                    views.setViewVisibility(R.id.widget_idle_text, android.view.View.GONE)
+
+                    if (rideInfo.type == NotificationType.LOGIN) {
+                        views.setTextViewText(R.id.widget_title, "SignIn/Out ETP: ${rideInfo.etp ?: "--:--"}")
+                        views.setTextViewText(R.id.widget_otp, "${rideInfo.signInOtp ?: "----"} / ${rideInfo.signOutOtp ?: "----"}")
+                        views.setTextViewText(R.id.widget_subtitle, "Cab: ${rideInfo.cabNo ?: "--"}")
+                    } else if (rideInfo.type == NotificationType.LOGOUT) {
+                        views.setTextViewText(R.id.widget_title, "Drop OTP [Route ${rideInfo.routeNo ?: "--"}]")
+                        views.setTextViewText(R.id.widget_otp, "${rideInfo.signInOtp ?: "----"} / ${rideInfo.signOutOtp ?: "----"}")
+                        views.setTextViewText(R.id.widget_subtitle, "")
+                    } else if (rideInfo.type == NotificationType.APPROACHING) {
+                        views.setTextViewText(R.id.widget_title, "🚐 CAB NEAR! ${rideInfo.cabNo ?: "--"}")
+                        views.setTextViewText(R.id.widget_otp, "${rideInfo.signInOtp ?: "----"} / ${rideInfo.signOutOtp ?: "----"}")
+                        views.setTextViewText(R.id.widget_subtitle, "")
+                    }
                 }
             }
 

@@ -269,9 +269,14 @@ fun DashboardAppUI(
                             Text("Simulate 1.5km Away")
                         }
                         Button(onClick = {
-                            onSimulate(RideInfo(NotificationType.LOGOUT, "1024", "2048", null, null, "R-18", false, "Test Evening"))
+                            onSimulate(RideInfo(NotificationType.LOGOUT, "1024", "2048", "19:00", null, "R-18", false, "Test Evening"))
                         }, modifier = Modifier.fillMaxWidth()) {
                             Text("Simulate Evening Logout")
+                        }
+                        Button(onClick = {
+                            onSimulate(RideInfo(NotificationType.IDLE, rawText = "Simulated IDLE"))
+                        }, modifier = Modifier.fillMaxWidth()) {
+                            Text("Simulate IDLE State")
                         }
                     }
                 }

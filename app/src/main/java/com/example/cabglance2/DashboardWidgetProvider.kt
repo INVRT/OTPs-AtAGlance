@@ -60,24 +60,41 @@ class DashboardWidgetProvider : AppWidgetProvider() {
                 } else if (rideInfo.type == NotificationType.APPROACHING) {
                     headerText = "CAB APPROACHING!"
                     dotColor = Color.parseColor("#FFC107") // Yellow
+                } else if (rideInfo.type == NotificationType.IDLE) {
+                    headerText = "IDLE"
+                    dotColor = Color.parseColor("#D3D3D3") // Light grey
                 }
                 
                 views.setTextViewText(R.id.widget_dash_status, headerText)
                 views.setInt(R.id.widget_dash_dot, "setColorFilter", dotColor)
 
-                views.setTextViewText(R.id.widget_dash_cab, rideInfo.cabNo ?: "Unknown")
-
-                val routeTimeText = if (rideInfo.etp != null) {
-                    "${rideInfo.etp}"
-                } else if (rideInfo.routeNo != null) {
-                    "${rideInfo.routeNo}"
+                if (rideInfo.type == NotificationType.IDLE) {
+                    views.setViewVisibility(R.id.widget_dash_active_top, android.view.View.GONE)
+                    views.setViewVisibility(R.id.widget_dash_active_bottom, android.view.View.GONE)
+                    views.setViewVisibility(R.id.widget_dash_idle_text, android.view.View.VISIBLE)
                 } else {
-                    "---"
-                }
-                views.setTextViewText(R.id.widget_dash_route, routeTimeText)
+                    views.setViewVisibility(R.id.widget_dash_active_top, android.view.View.VISIBLE)
+                    views.setViewVisibility(R.id.widget_dash_active_bottom, android.view.View.VISIBLE)
+                    views.setViewVisibility(R.id.widget_dash_idle_text, android.view.View.GONE)
 
-                views.setTextViewText(R.id.widget_dash_otp_in, rideInfo.signInOtp ?: "----")
-                views.setTextViewText(R.id.widget_dash_otp_out, rideInfo.signOutOtp ?: "----")
+                    views.setTextViewText(R.id.widget_dash_cab, rideInfo.cabNo ?: "Unknown")
+
+                    val routeTimeText = if (rideInfo.type == NotificationType.LOGIN && rideInfo.etp != null) {
+                        "${rideInfo.etp}"
+                    } else if (rideInfo.type == NotificationType.LOGOUT && rideInfo.routeNo != null) {
+                        "${rideInfo.routeNo}"
+                    } else if (rideInfo.etp != null) {
+                        "${rideInfo.etp}"
+                    } else if (rideInfo.routeNo != null) {
+                        "${rideInfo.routeNo}"
+                    } else {
+                        "---"
+                    }
+                    views.setTextViewText(R.id.widget_dash_route, routeTimeText)
+
+                    views.setTextViewText(R.id.widget_dash_otp_in, rideInfo.signInOtp ?: "----")
+                    views.setTextViewText(R.id.widget_dash_otp_out, rideInfo.signOutOtp ?: "----")
+                }
             }
 
             appWidgetManager.updateAppWidget(appWidgetId, views)

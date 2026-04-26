@@ -33,6 +33,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/widget_dash_active_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -96,6 +97,7 @@
 
     <!-- OTP Grid -->
     <LinearLayout
+        android:id="@+id/widget_dash_active_bottom"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -160,5 +162,18 @@
                 android:fontFamily="google-sans" />
         </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_dash_idle_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="hope you have your next cab booked! : )"
+        android:textColor="#A0B0C0"
+        android:textSize="18sp"
+        android:fontFamily="google-sans"
+        android:visibility="gone"
+        android:padding="24dp" />
 
 </LinearLayout>

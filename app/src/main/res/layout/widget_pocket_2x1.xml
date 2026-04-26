@@ -74,4 +74,18 @@
         android:fontFamily="google-sans"
         android:gravity="center"
         android:includeFontPadding="false" />
+
+    <!-- IDLE Message Layer -->
+    <TextView
+        android:id="@+id/widget_pocket_idle_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/widget_pocket_left_header"
+        android:text="hope you have your next cab booked! : )"
+        android:textColor="#A0B0C0"
+        android:textSize="14sp"
+        android:fontFamily="google-sans"
+        android:gravity="center"
+        android:visibility="gone"
+        android:paddingHorizontal="16dp" />
 </RelativeLayout>

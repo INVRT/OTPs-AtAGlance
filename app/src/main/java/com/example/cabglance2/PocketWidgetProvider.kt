@@ -59,6 +59,7 @@ class PocketWidgetProvider : AppWidgetProvider() {
             // Prevent app opening
             views.setOnClickPendingIntent(R.id.widget_root, togglePending)
             views.setOnClickPendingIntent(R.id.widget_pocket_otp, togglePending)
+            views.setOnClickPendingIntent(R.id.widget_pocket_idle_text, togglePending)
 
             if (rideInfo == null) {
                 views.setTextViewText(R.id.widget_pocket_header, "No Ride")
@@ -81,6 +82,9 @@ class PocketWidgetProvider : AppWidgetProvider() {
                     val etpText = rideInfo.etp
                     headerText = if (etpText != null) "NEAR • $etpText" else "NEAR"
                     dotColor = Color.parseColor("#FFC107") // Yellow for Near
+                } else if (rideInfo.type == NotificationType.IDLE) {
+                    headerText = "IDLE"
+                    dotColor = Color.parseColor("#D3D3D3") // Light grey
                 }
                 
                 if (headerText.isBlank() && rideInfo.cabNo != null) {
@@ -90,8 +94,20 @@ class PocketWidgetProvider : AppWidgetProvider() {
                 views.setTextViewText(R.id.widget_pocket_header, headerText)
                 views.setInt(R.id.widget_pocket_dot, "setColorFilter", dotColor)
 
-                val activeOtp = if (isSignIn) rideInfo.signInOtp else rideInfo.signOutOtp
-                views.setTextViewText(R.id.widget_pocket_otp, activeOtp ?: "----")
+                if (rideInfo.type == NotificationType.IDLE) {
+                    views.setViewVisibility(R.id.widget_pocket_otp, android.view.View.GONE)
+                    views.setViewVisibility(R.id.widget_pocket_in_out, android.view.View.GONE)
+                    views.setViewVisibility(R.id.widget_pocket_idle_text, android.view.View.VISIBLE)
+                    
+                    val idleColor = if (isSignIn) Color.parseColor("#A0B0C0") else Color.parseColor("#FDD835")
+                    views.setTextColor(R.id.widget_pocket_idle_text, idleColor)
+                } else {
+                    views.setViewVisibility(R.id.widget_pocket_otp, android.view.View.VISIBLE)
+                    views.setViewVisibility(R.id.widget_pocket_in_out, android.view.View.VISIBLE)
+                    views.setViewVisibility(R.id.widget_pocket_idle_text, android.view.View.GONE)
+                    val activeOtp = if (isSignIn) rideInfo.signInOtp else rideInfo.signOutOtp
+                    views.setTextViewText(R.id.widget_pocket_otp, activeOtp ?: "----")
+                }
             }
 
             appWidgetManager.updateAppWidget(appWidgetId, views)

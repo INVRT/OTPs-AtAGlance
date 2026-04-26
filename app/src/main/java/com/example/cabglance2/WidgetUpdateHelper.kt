@@ -24,6 +24,13 @@ object WidgetUpdateHelper {
         RideDataStore.saveRideInfo(context, rideInfo)
         val finalInfo = RideDataStore.getRideInfo(context) ?: rideInfo
         
+        // Schedule Idle Worker
+        if (finalInfo.type == NotificationType.LOGIN || finalInfo.type == NotificationType.LOGOUT) {
+            scheduleIdleState(context, finalInfo.etp)
+        } else if (finalInfo.type == NotificationType.IDLE) {
+            androidx.work.WorkManager.getInstance(context).cancelUniqueWork("IdleStateTransition")
+        }
+        
         // 2. Update Sticky Notification
         showStickyNotification(context, finalInfo)
         
@@ -42,9 +49,53 @@ object WidgetUpdateHelper {
         context.sendBroadcast(intent)
     }
 
+    private fun scheduleIdleState(context: Context, etpStr: String?) {
+        val workManager = androidx.work.WorkManager.getInstance(context)
+        if (etpStr == null) {
+            workManager.cancelUniqueWork("IdleStateTransition")
+            return
+        }
+        try {
+            val parts = etpStr.split(":")
+            val targetHour = parts[0].toInt()
+            val targetMin = parts[1].toInt()
+
+            val now = java.util.Calendar.getInstance()
+            val target = java.util.Calendar.getInstance().apply {
+                set(java.util.Calendar.HOUR_OF_DAY, targetHour)
+                set(java.util.Calendar.MINUTE, targetMin)
+                set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
+            }
+            
+            // If ETP is < now by more than 12 hours, assume it's for tomorrow
+            if (now.timeInMillis - target.timeInMillis > 12 * 60 * 60 * 1000L) {
+                target.add(java.util.Calendar.DAY_OF_YEAR, 1)
+            }
+
+            // Trigger IDLE exactly 2 hours after ETP/Logout
+            target.add(java.util.Calendar.HOUR_OF_DAY, 2)
+
+            var delayMs = target.timeInMillis - now.timeInMillis
+            if (delayMs < 0) delayMs = 0
+
+            val idleWork = androidx.work.OneTimeWorkRequestBuilder<IdleWorker>()
+                .setInitialDelay(delayMs, java.util.concurrent.TimeUnit.MILLISECONDS)
+                .build()
+
+            workManager.enqueueUniqueWork(
+                "IdleStateTransition",
+                androidx.work.ExistingWorkPolicy.REPLACE,
+                idleWork
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private fun showStickyNotification(context: Context, rideInfo: RideInfo) {
         val nm = NotificationManagerCompat.from(context)
-        if (!SettingsManager.isStickyNotificationEnabled(context)) {
+        if (!SettingsManager.isStickyNotificationEnabled(context) || rideInfo.type == NotificationType.IDLE) {
             nm.cancel(NOTIFICATION_ID)
             return
         }
