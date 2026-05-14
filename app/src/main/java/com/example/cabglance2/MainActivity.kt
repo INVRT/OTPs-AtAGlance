@@ -270,7 +270,10 @@ fun DashboardAppUI(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         Button(onClick = {
-                            onSimulate(RideInfo(NotificationType.LOGIN, "8192", "4096", "08:30", "KA-01-AB-1234", "R-15", false, "Test Morning"))
+                            val cal = java.util.Calendar.getInstance()
+                            cal.add(java.util.Calendar.MINUTE, 30)
+                            val dynamicEtp = String.format("%02d:%02d", cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE))
+                            onSimulate(RideInfo(NotificationType.LOGIN, "8192", "4096", dynamicEtp, "KA-01-AB-1234", "R-15", false, "Test Morning"))
                         }, modifier = Modifier.fillMaxWidth()) {
                             Text("Simulate Morning Login")
                         }
@@ -280,7 +283,10 @@ fun DashboardAppUI(
                             Text("Simulate 1.5km Away")
                         }
                         Button(onClick = {
-                            onSimulate(RideInfo(NotificationType.LOGOUT, "1024", "2048", "19:00", null, "R-18", false, "Test Evening"))
+                            val cal = java.util.Calendar.getInstance()
+                            cal.add(java.util.Calendar.MINUTE, 30)
+                            val dynamicEtp = String.format("%02d:%02d", cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE))
+                            onSimulate(RideInfo(NotificationType.LOGOUT, "1024", "2048", dynamicEtp, null, "R-18", false, "Test Evening"))
                         }, modifier = Modifier.fillMaxWidth()) {
                             Text("Simulate Evening Logout")
                         }

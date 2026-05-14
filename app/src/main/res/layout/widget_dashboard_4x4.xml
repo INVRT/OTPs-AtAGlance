@@ -30,6 +30,42 @@
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:fontFamily="google-sans" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/widget_dash_call_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/widget_card_bg"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/widget_dash_call_icon_top"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@android:drawable/ic_menu_call"
+                android:tint="#FDD835" />
+                
+            <TextView
+                android:id="@+id/widget_dash_call_text_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DRIVER"
+                android:textColor="#E3E2E6"
+                android:textSize="10sp"
+                android:fontFamily="google-sans"
+                android:textStyle="bold"
+                android:layout_marginStart="6dp" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

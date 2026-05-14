@@ -20,6 +20,16 @@ class DashboardWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: android.os.Bundle
+    ) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        updateAppWidget(context, appWidgetManager, appWidgetId)
+    }
+
     companion object {
 
         fun updateAppWidget(
@@ -41,7 +51,15 @@ class DashboardWidgetProvider : AppWidgetProvider() {
             )
             views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
 
+            val callIntent = Intent(Intent.ACTION_DIAL, android.net.Uri.parse("tel:+914440114070"))
+            callIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            val callPendingIntent = PendingIntent.getActivity(
+                context, 1, callIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            views.setOnClickPendingIntent(R.id.widget_dash_call_top, callPendingIntent)
+
             if (rideInfo == null) {
+                views.setViewVisibility(R.id.widget_dash_call_top, android.view.View.GONE)
                 views.setTextViewText(R.id.widget_dash_status, "No Active Commute")
                 views.setTextViewText(R.id.widget_dash_cab, "---")
                 views.setTextViewText(R.id.widget_dash_route, "---")
@@ -69,10 +87,12 @@ class DashboardWidgetProvider : AppWidgetProvider() {
                 views.setInt(R.id.widget_dash_dot, "setColorFilter", dotColor)
 
                 if (rideInfo.type == NotificationType.IDLE) {
+                    views.setViewVisibility(R.id.widget_dash_call_top, android.view.View.GONE)
                     views.setViewVisibility(R.id.widget_dash_active_top, android.view.View.GONE)
                     views.setViewVisibility(R.id.widget_dash_active_bottom, android.view.View.GONE)
                     views.setViewVisibility(R.id.widget_dash_idle_text, android.view.View.VISIBLE)
                 } else {
+                    views.setViewVisibility(R.id.widget_dash_call_top, android.view.View.VISIBLE)
                     views.setViewVisibility(R.id.widget_dash_active_top, android.view.View.VISIBLE)
                     views.setViewVisibility(R.id.widget_dash_active_bottom, android.view.View.VISIBLE)
                     views.setViewVisibility(R.id.widget_dash_idle_text, android.view.View.GONE)
@@ -94,6 +114,15 @@ class DashboardWidgetProvider : AppWidgetProvider() {
 
                     views.setTextViewText(R.id.widget_dash_otp_in, rideInfo.signInOtp ?: "----")
                     views.setTextViewText(R.id.widget_dash_otp_out, rideInfo.signOutOtp ?: "----")
+
+                    val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
+                    val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+                    
+                    if (minWidth >= 280) { // Widget is widened
+                        views.setViewVisibility(R.id.widget_dash_call_text_top, android.view.View.VISIBLE)
+                    } else { // Standard 4x4 compact size
+                        views.setViewVisibility(R.id.widget_dash_call_text_top, android.view.View.GONE)
+                    }
                 }
             }
 
